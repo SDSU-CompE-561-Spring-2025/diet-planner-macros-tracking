@@ -8,7 +8,7 @@ Project Description: The AI-Driven Meal Planner helps users plan meals based on 
 Part 2: Define the API Endpoints
 Place your description here
 
-Part 3: Data Models
+Part 3: Data Models (Sarah Azzalddin)
 Place your description here
 
 Part 4: Database Schema
