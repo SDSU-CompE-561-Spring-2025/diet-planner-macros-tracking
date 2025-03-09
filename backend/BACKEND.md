@@ -12,7 +12,33 @@ Part 3: Data Models (Sarah Azzalddin)
 Place your description here
 
 Part 4: Database Schema
-Place your description here
+### Users Table:
+| Column      | Type         | Constraints |
+|------------|------------|------------|
+| id         | int        | Primary Key, Auto Increment |
+| name       | varchar    | Required |
+| email      | varchar    | Required, Unique |
+| password   | varchar    | Required |
+| created_at | datetime   | Default to current time |
+
+### Recipes Table:
+| Column      | Type         | Constraints |
+|------------|------------|------------|
+| id         | int        | Primary Key, Auto Increment |
+| title      | varchar    | Required |
+| ingredients | JSON       | Required |
+| instructions | text      | Required |
+| dietary_preferences | varchar | Optional |
+
+### Shopping List Table:
+| Column      | Type         | Constraints |
+|------------|------------|------------|
+| id         | int        | Primary Key, Auto Increment |
+| user_id    | int        | Foreign Key References Users(id) |
+| item_name  | varchar    | Required |
+| quantity   | int        | Required |
+| store      | varchar    | Optional |
+
 
 Part 5: Additional Considerations
 Place your description here
