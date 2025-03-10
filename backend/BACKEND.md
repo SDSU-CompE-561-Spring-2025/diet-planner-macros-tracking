@@ -1,11 +1,13 @@
-# this document is for the backend plan layout
+# Backend Plan Layout
 
-Part 1: Project Overview
-Project Title: AI-Driven Meal Planner
+## Part 1: Project Overview
+
+### Project Title: AI-Driven Meal Planner
 
 Project Description: The AI-Driven Meal Planner helps users plan meals based on budget, dietary preferences, and location. It suggests recipes, provides shopping lists, and recommends local stores or delivery options. The platform is user-friendly and adaptable to various needs and preferences.
 
 Part 2: Define the API Endpoints
+
 
     Endpoint URL: /api/user/
     HTTP Method: POST
@@ -37,53 +39,77 @@ Part 2: Define the API Endpoints
     Request Parameters: { food, quantity }
     Response Structure: { success: true, nutrition: { calories, protein, fat, carbs } }
 
-
-
-
 Part 3: Data Models (Sarah Azzalddin)
 Place your description here
 
-Part 4: Database Schema
+> > > > > > > Stashed changes
+
+## Part 3: Data Models
+
 ### Users Table:
-| Column      | Type         | Constraints |
-|------------|------------|------------|
-| id         | int        | Primary Key, Auto Increment |
-| name       | varchar    | Required |
-| email      | varchar    | Required, Unique |
-| password   | varchar    | Required |
-| created_at | datetime   | Default to current time |
+
+| Column     | Type     | Constraints                 |
+| ---------- | -------- | --------------------------- |
+| id         | int      | Primary Key, Auto Increment |
+| name       | varchar  | Required                    |
+| email      | varchar  | Required, Unique            |
+| password   | varchar  | Required                    |
+| created_at | datetime | Default to current time     |
 
 ### Recipes Table:
-| Column      | Type         | Constraints |
-|------------|------------|------------|
-| id         | int        | Primary Key, Auto Increment |
-| title      | varchar    | Required |
-| ingredients | JSON       | Required |
-| instructions | text      | Required |
-| dietary_preferences | varchar | Optional |
+
+| Column              | Type    | Constraints                 |
+| ------------------- | ------- | --------------------------- |
+| id                  | int     | Primary Key, Auto Increment |
+| title               | varchar | Required                    |
+| ingredients         | JSON    | Required                    |
+| instructions        | text    | Required                    |
+| dietary_preferences | varchar | Optional                    |
 
 ### Shopping List Table:
-| Column      | Type         | Constraints |
-|------------|------------|------------|
-| id         | int        | Primary Key, Auto Increment |
-| user_id    | int        | Foreign Key References Users(id) |
-| item_name  | varchar    | Required |
-| quantity   | int        | Required |
-| store      | varchar    | Optional |
 
+| Column    | Type    | Constraints                      |
+| --------- | ------- | -------------------------------- |
+| id        | int     | Primary Key, Auto Increment      |
+| user_id   | int     | Foreign Key References Users(id) |
+| item_name | varchar | Required                         |
+| quantity  | int     | Required                         |
+| store     | varchar | Optional                         |
 
-Part 5: Additional Considerations
+## Part 4: Database Schema
+
+### Users Table:
+
+columns: id, name, email, password, created_at
+
+### Recipes Table:
+
+columns: id, title, ingredient, instructions, dietary_preferences
+
+### Shopping List Table:
+
+columns: id, user_id, item_name, quantity, store
+
+## Part 5: Additional Considerations
 
 ### Authentication:
 
-Users will authenticate using JWT (JSON Web Token).
-Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
+Users will authenticate using JWT (JSON Web Token). Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
+Users will authenticate using JWT (JSON Web Token). Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
 
 ### Middleware:
 
-CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API.
-Logging Middleware to track API requests and responses for debugging.
+CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API. Logging Middleware to track API requests and responses for debugging.
+CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API. Logging Middleware to track API requests and responses for debugging.
 
 ### Error Handling:
 
 Standardized error responses with appropriate HTTP status codes.
+
+### Testing:
+
+The way to test the API is we're going to be using Postman.
+
+### Testing:
+
+The way to test the API is we're going to be using Postman.
