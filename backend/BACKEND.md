@@ -4,12 +4,9 @@
 
 ### Project Title: AI-Driven Meal Planner
 
+Project Description: The AI-Driven Meal Planner helps users plan meals based on budget, dietary preferences, and location. It suggests recipes, provides shopping lists, and recommends local stores or delivery options. The platform is user-friendly and adaptable to various needs and preferences.
 
-### Project Description
-
-The AI-Driven Meal Planner is designed to assist users in planning their meals according to their budget, dietary preferences, and location. It offers recipe suggestions, generates shopping lists, and recommends local stores or delivery options. The platform is intuitive and flexible, catering to a wide range of needs and preferences.
-
-## Part 2: Define the API Endpoints
+Part 2: Define the API Endpoints
 
 
     Endpoint URL: /api/user/
@@ -40,7 +37,12 @@ The AI-Driven Meal Planner is designed to assist users in planning their meals a
     HTTP Method: POST
     Description: Get nutrition details for a given food item.
     Request Parameters: { food, quantity }
-    Response Structure: { success: true, nutrition: { calories, protein, fat, sugars, carbs } }
+    Response Structure: { success: true, nutrition: { calories, protein, fat, carbs } }
+
+Part 3: Data Models (Sarah Azzalddin)
+Place your description here
+
+> > > > > > > Stashed changes
 
 ## Part 3: Data Models
 
@@ -54,22 +56,15 @@ The AI-Driven Meal Planner is designed to assist users in planning their meals a
 | password   | varchar  | Required                    |
 | created_at | datetime | Default to current time     |
 
-### Meals Table:
+### Recipes Table:
 
-| Column      | Type    | Constraints                 |
-| ----------- | ------- | --------------------------- |
-| id          | int     | Primary Key, Auto Increment |
-| name        | varchar | Required                    |
-| ingredients | JSON    | Required                    |
-| calories    | int     | Required                    |
-
-### Meal Plans Table:
-
-| Column    | Type | Constraints                      |
-| --------- | ---- | -------------------------------- |
-| id        | int  | Primary Key, Auto Increment      |
-| user_id   | int  | Foreign Key References Users(id) |
-| meal_plan | JSON | Required                         |
+| Column              | Type    | Constraints                 |
+| ------------------- | ------- | --------------------------- |
+| id                  | int     | Primary Key, Auto Increment |
+| title               | varchar | Required                    |
+| ingredients         | JSON    | Required                    |
+| instructions        | text    | Required                    |
+| dietary_preferences | varchar | Optional                    |
 
 ### Shopping List Table:
 
@@ -79,42 +74,13 @@ The AI-Driven Meal Planner is designed to assist users in planning their meals a
 | user_id   | int     | Foreign Key References Users(id) |
 | item_name | varchar | Required                         |
 | quantity  | int     | Required                         |
-
-### Nutrition Table:
-
-| Column   | Type    | Constraints                 |
-| -------- | ------- | --------------------------- |
-| id       | int     | Primary Key, Auto Increment |
-| food     | varchar | Required                    |
-| quantity | int     | Required                    |
-| calories | int     | Required                    |
-| protein  | int     | Required                    |
-| fat      | int     | Required                    |
-| sugars   | int     | Required                    |
-| carbs    | int     | Required                    |
-
+| store     | varchar | Optional                         |
 
 ## Part 4: Database Schema
 
 ### Users Table:
 
 columns: id, name, email, password, created_at
-
-### Meals Table:
-
-columns: id, name, ingredients, calories
-
-### Meal Plans Table:
-
-columns: id, user_id, meal_plan
-
-### Shopping List Table:
-
-columns: id, user_id, item_name, quantity
-
-### Nutrition Table:
-
-columns: id, food, quantity, calories, protein, fat, sugars, carbs
 
 ### Recipes Table:
 
@@ -129,9 +95,11 @@ columns: id, user_id, item_name, quantity, store
 ### Authentication:
 
 Users will authenticate using JWT (JSON Web Token). Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
+Users will authenticate using JWT (JSON Web Token). Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
 
 ### Middleware:
 
+CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API. Logging Middleware to track API requests and responses for debugging.
 CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API. Logging Middleware to track API requests and responses for debugging.
 
 ### Error Handling:
@@ -142,3 +110,6 @@ Standardized error responses with appropriate HTTP status codes.
 
 The way to test the API is we're going to be using Postman.
 
+### Testing:
+
+The way to test the API is we're going to be using Postman.
