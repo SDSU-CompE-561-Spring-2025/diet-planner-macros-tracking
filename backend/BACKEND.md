@@ -10,129 +10,105 @@ The AI-Driven Meal Planner is designed to assist users in planning their meals a
 
 ## Part 2: Define the API Endpoints
 
-### User Authentication
-
-- **Endpoint URL:** `/api/user/`
-- **HTTP Method:** `POST`
-- **Description:** Authenticate a user and return a token.
-- **Request Parameters:** `{ name, email, password }`
-- **Response Structure:**
-  - **Success:** `{ success: true, token: "..." }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-
-### Add Meal
-
-- **Endpoint URL:** `/api/meals/`
-- **HTTP Method:** `POST`
-- **Description:** Add a meal to the user's meal list.
-- **Request Parameters:** `{ name, ingredients, calories }`
-- **Response Structure:**
-  - **Success:** `{ success: true, meal: { ... } }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-
-### Create Meal Plan
-
-- **Endpoint URL:** `/api/meal-plans/`
-- **HTTP Method:** `POST`
-- **Description:** Create a new meal plan for the user.
-- **Request Parameters:** `{ userId, mealPlan: [{ meal, day, time }] }`
-- **Response Structure:**
-  - **Success:** `{ success: true, message: "Meal plan created" }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-
-### Create Shopping List
-
-- **Endpoint URL:** `/api/shopping-list/`
-- **HTTP Method:** `POST`
-- **Description:** Create a shopping list based on the user's meals.
-- **Request Parameters:** `{ userId, items: [{ name, quantity }] }`
-- **Response Structure:**
-  - **Success:** `{ success: true, message: "Shopping list created" }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-
-### Get Nutrition Details
-
-- **Endpoint URL:** `/api/nutrition/`
-- **HTTP Method:** `POST`
-- **Description:** Get nutrition details for a given food item.
-- **Request Parameters:** `{ food, quantity }`
-- **Response Structure:**
-  - **Success:** `{ success: true, nutrition: { calories, protein, fat, sugars, carbs } }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-
-### Get Nearby Restaurants
-
-- **Endpoint URL:** `/api/restaurants/nearby`
-- **HTTP Method:** `GET`
-- **Description:** Get a list of nearby restaurants based on location and optional filters.
-- **Request Parameters:** `{ location, cuisine, price, rating, review_count }`
-- **Response Structure:**
-  - **Success:** `{ restaurants: [...] }`
-  - **Error:** `{ success: false, error: "Invalid request parameters" }`
-  - **Error:** `{ error: "Failed to fetch data from Yelp", status_code: 500 }`
+| Endpoint Name          | URL                       | HTTP Method | Description                                                              | Request Parameters                                   | Success Response Structure                                                | Error Response Structure                                                                                                   |
+| ---------------------- | ------------------------- | ----------- | ------------------------------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| User Authentication    | `/api/user/`              | POST        | Authenticate a user and return a token.                                  | `{ name, email, password }`                          | `{ success: true, token: "..." }`                                         | `{ success: false, error: "Invalid request parameters" }`                                                                  |
+| Add Meal               | `/api/meals/`             | POST        | Add a meal to the user's meal list.                                      | `{ name, ingredients, calories }`                    | `{ success: true, meal: { ... } }`                                        | `{ success: false, error: "Invalid request parameters" }`                                                                  |
+| Create Meal Plan       | `/api/meal-plans/`        | POST        | Create a new meal plan for the user.                                     | `{ userId, mealPlan: [{ meal, day, time }] }`        | `{ success: true, message: "Meal plan created" }`                         | `{ success: false, error: "Invalid request parameters" }`                                                                  |
+| Create Shopping List   | `/api/shopping-list/`     | POST        | Create a shopping list based on the user's meals.                        | `{ userId, items: [{ name, quantity }] }`            | `{ success: true, message: "Shopping list created" }`                     | `{ success: false, error: "Invalid request parameters" }`                                                                  |
+| Get Nutrition Details  | `/api/nutrition/`         | POST        | Get nutrition details for a given food item.                             | `{ food, quantity }`                                 | `{ success: true, nutrition: { calories, protein, fat, sugars, carbs } }` | `{ success: false, error: "Invalid request parameters" }`                                                                  |
+| Get Nearby Restaurants | `/api/restaurants/nearby` | GET         | Get a list of nearby restaurants based on location and optional filters. | `{ location, cuisine, price, rating, review_count }` | `{ restaurants: [...] }`                                                  | `{ success: false, error: "Invalid request parameters" }`, `{ error: "Failed to fetch data from Yelp", status_code: 500 }` |
 
 ## Part 3: Data Models
 
-### Users Table
+Define the data models that your application will use. For each model, include:
 
-| Column     | Type     | Constraints                 |
-| ---------- | -------- | --------------------------- |
-| id         | int      | Primary Key, Auto Increment |
-| name       | varchar  | Required                    |
-| email      | varchar  | Required, Unique            |
-| password   | varchar  | Required                    |
-| created_at | datetime | Default to current time     |
+### User Model
 
-### Meals Table
+| Attribute  | Data Type | Constraints                 |
+| ---------- | --------- | --------------------------- |
+| id         | int       | primary key, auto-increment |
+| name       | varchar   | required                    |
+| email      | varchar   | required, unique            |
+| password   | varchar   | required                    |
+| created_at | datetime  | default to current time     |
 
-| Column      | Type    | Constraints                 |
-| ----------- | ------- | --------------------------- |
-| id          | int     | Primary Key, Auto Increment |
-| name        | varchar | Required                    |
-| ingredients | JSON    | Required                    |
-| calories    | int     | Required                    |
+**Relationships:**
 
-### Meal Plans Table
+- A user can have many meal plans.
+- A user can have many shopping list items.
 
-| Column    | Type | Constraints                      |
-| --------- | ---- | -------------------------------- |
-| id        | int  | Primary Key, Auto Increment      |
-| user_id   | int  | Foreign Key References Users(id) |
-| meal_plan | JSON | Required                         |
+### Meal Model
 
-### Shopping List Table
+| Attribute   | Data Type | Constraints                 |
+| ----------- | --------- | --------------------------- |
+| id          | int       | primary key, auto-increment |
+| name        | varchar   | required                    |
+| ingredients | JSON      | required                    |
+| calories    | int       | required                    |
 
-| Column    | Type    | Constraints                      |
-| --------- | ------- | -------------------------------- |
-| id        | int     | Primary Key, Auto Increment      |
-| user_id   | int     | Foreign Key References Users(id) |
-| item_name | varchar | Required                         |
-| quantity  | int     | Required                         |
+**Relationships:**
 
-### Nutrition Table
+- A meal can be part of many meal plans.
 
-| Column   | Type    | Constraints                 |
-| -------- | ------- | --------------------------- |
-| id       | int     | Primary Key, Auto Increment |
-| food     | varchar | Required                    |
-| quantity | int     | Required                    |
-| calories | int     | Required                    |
-| protein  | int     | Required                    |
-| fat      | int     | Required                    |
-| sugars   | int     | Required                    |
-| carbs    | int     | Required                    |
+### Meal Plan Model
 
-### Nearby Restaurants
+| Attribute | Data Type | Constraints                      |
+| --------- | --------- | -------------------------------- |
+| id        | int       | primary key, auto-increment      |
+| user_id   | int       | foreign key references Users(id) |
+| meal_plan | JSON      | required                         |
 
-| Column       | Type    | Constraints                 |
-| ------------ | ------- | --------------------------- |
-| id           | int     | Primary Key, Auto Increment |
-| name         | varchar | Required                    |
-| location     | varchar | Required                    |
-| cuisine      | varchar | Optional                    |
-| price        | int     | Optional                    |
-| rating       | float   | Optional                    |
-| review_count | int     | Optional                    |
+**Relationships:**
+
+- A meal plan belongs to one user.
+- A meal plan can include many meals.
+
+### Shopping List Model
+
+| Attribute | Data Type | Constraints                      |
+| --------- | --------- | -------------------------------- |
+| id        | int       | primary key, auto-increment      |
+| user_id   | int       | foreign key references Users(id) |
+| item_name | varchar   | required                         |
+| quantity  | int       | required                         |
+
+**Relationships:**
+
+- A shopping list item belongs to one user.
+
+### Nutrition Model
+
+| Attribute | Data Type | Constraints                 |
+| --------- | --------- | --------------------------- |
+| id        | int       | primary key, auto-increment |
+| food      | varchar   | required                    |
+| quantity  | int       | required                    |
+| calories  | int       | required                    |
+| protein   | int       | required                    |
+| fat       | int       | required                    |
+| sugars    | int       | required                    |
+| carbs     | int       | required                    |
+
+**Relationships:**
+
+- No direct relationships with other models.
+
+### Nearby Restaurant Model
+
+| Attribute    | Data Type | Constraints                 |
+| ------------ | --------- | --------------------------- |
+| id           | int       | primary key, auto-increment |
+| name         | varchar   | required                    |
+| location     | varchar   | required                    |
+| cuisine      | varchar   | optional                    |
+| price        | int       | optional                    |
+| rating       | float     | optional                    |
+| review_count | int       | optional                    |
+
+**Relationships:**
+
+- No direct relationships with other models.
 
 ## Part 4: Database Schema
 
