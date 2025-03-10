@@ -8,11 +8,12 @@ Project Description: The AI-Driven Meal Planner helps users plan meals based on 
 
 Part 2: Define the API Endpoints
 
-Endpoint URL: /api/user/
-HTTP Method: POST
-Description: Authenticate a user and return a token.
-Request Parameters: { name, email, password }
-Response Structure: { success: true, token: "..." }
+
+    Endpoint URL: /api/user/
+    HTTP Method: POST
+    Description: Authenticate a user and return a token.
+    Request Parameters: { name, email, password }
+    Response Structure: { success: true, token: "..." }
 
     Endpoint URL: /api/meals/
     HTTP Method: POST
