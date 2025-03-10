@@ -41,6 +41,7 @@ Part 4: Database Schema
 
 
 Part 5: Additional Considerations
+
 Authentication:
 
 Users will authenticate using JWT (JSON Web Token).
