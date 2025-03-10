@@ -34,6 +34,17 @@ paths:
                     type: boolean
                   token:
                     type: string
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
   /api/meals/:
     post:
       summary: Add a meal to the user's meal list
@@ -62,6 +73,17 @@ paths:
                     type: boolean
                   meal:
                     type: object
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
   /api/meal-plans/:
     post:
       summary: Create a new meal plan for the user
@@ -97,6 +119,17 @@ paths:
                     type: boolean
                   message:
                     type: string
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
   /api/shopping-list/:
     post:
       summary: Create a shopping list based on the user's meals
@@ -129,6 +162,17 @@ paths:
                   success:
                     type: boolean
                   message:
+                    type: string
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
                     type: string
   /api/nutrition/:
     post:
@@ -167,3 +211,65 @@ paths:
                         type: integer
                       carbs:
                         type: integer
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+  /api/restaurants/nearby:
+    get:
+      summary: Get a list of nearby restaurants based on location and optional filters
+      parameters:
+        - name: location
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: cuisine
+          in: query
+          schema:
+            type: string
+        - name: price
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of nearby restaurants retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restaurants:
+                    type: array
+                    items:
+                      type: object
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+        "500":
+          description: Failed to fetch data from Yelp
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  status_code:
+                    type: integer
