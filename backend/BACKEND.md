@@ -42,12 +42,15 @@ Part 4: Database Schema
 
 Part 5: Additional Considerations
 Authentication:
+
 Users will authenticate using JWT (JSON Web Token).
 Upon successful login, a JWT token will be issued and must be included in requests to access protected endpoints.
 
 Middleware:
+
 CORS (Cross-Origin Resource Sharing) will be implemented to allow frontend applications to interact with the API.
 Logging Middleware to track API requests and responses for debugging.
 
 Error Handling:
+
 Standardized error responses with appropriate HTTP status codes.
