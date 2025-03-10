@@ -4,11 +4,13 @@
 
 ### Project Title: AI-Driven Meal Planner
 
+
 ### Project Description
 
 The AI-Driven Meal Planner is designed to assist users in planning their meals according to their budget, dietary preferences, and location. It offers recipe suggestions, generates shopping lists, and recommends local stores or delivery options. The platform is intuitive and flexible, catering to a wide range of needs and preferences.
 
 ## Part 2: Define the API Endpoints
+
 
     Endpoint URL: /api/user/
     HTTP Method: POST
@@ -91,6 +93,7 @@ The AI-Driven Meal Planner is designed to assist users in planning their meals a
 | sugars   | int     | Required                    |
 | carbs    | int     | Required                    |
 
+
 ## Part 4: Database Schema
 
 ### Users Table:
@@ -113,6 +116,14 @@ columns: id, user_id, item_name, quantity
 
 columns: id, food, quantity, calories, protein, fat, sugars, carbs
 
+### Recipes Table:
+
+columns: id, title, ingredient, instructions, dietary_preferences
+
+### Shopping List Table:
+
+columns: id, user_id, item_name, quantity, store
+
 ## Part 5: Additional Considerations
 
 ### Authentication:
@@ -130,3 +141,4 @@ Standardized error responses with appropriate HTTP status codes.
 ### Testing:
 
 The way to test the API is we're going to be using Postman.
+
