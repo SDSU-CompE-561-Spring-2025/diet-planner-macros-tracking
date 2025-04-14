@@ -10,6 +10,9 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    meal_plans = relationship("MealPlan", back_populates="user")
+    shopping_list = relationship("ShoppingList", back_populates="user")
 
 class Meal(Base):
     __tablename__ = "meals"
