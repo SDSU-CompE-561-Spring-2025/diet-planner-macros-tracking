@@ -1,47 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Dict
-
-from app import crud, schemas, models
-from app.database import get_db
+from .. import models, schemas, crud, dependencies, security
 
 router = APIRouter()
 
-@router.post("/", response_model=schemas.UserResponse)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+@router.post("/signup", response_model=schemas.UserResponse)
+def create_user(user: schemas.UserCreate, db: Session = Depends(dependencies.get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    created_user = crud.create_user(db=db, user=user)
-    return {"success": True, "data": created_user}
+    user.password = security.get_password_hash(user.password)
+    new_user = crud.create_user(db=db, user=user)
+    return {"success": True, "data": new_user}
 
+@router.post("/token", response_model=schemas.Token)
+def login_for_access_token(form_data: schemas.UserLogin, db: Session = Depends(dependencies.get_db)):
+    user = crud.authenticate_user(db, form_data.email, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    access_token = security.create_access_token(data={"sub": str(user.id)})
+    return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/{user_id}", response_model=schemas.UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"success": True, "data": db_user}
-
-
-@router.put("/{user_id}", response_model=schemas.UserResponse)
-def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    db_user.name = user.name
-    db_user.email = user.email
-    db_user.password = user.password  # You should hash the password here
-    db.commit()
-    db.refresh(db_user)
-    return {"success": True, "data": db_user}
-
-
-@router.delete("/{user_id}", response_model=Dict[str, str])
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    db.delete(db_user)
-    db.commit()
-    return {"success": True, "detail": "User deleted successfully"}
+@router.get("/me", response_model=schemas.UserResponse)
+def read_users_me(current_user: models.User = Depends(dependencies.get_current_user)):
+    return {"success": True, "data": current_user}

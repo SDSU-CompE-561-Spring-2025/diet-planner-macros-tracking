@@ -11,6 +11,10 @@ class User(Base):
     password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    meal_plans = relationship("MealPlan", back_populates="user", cascade="all, delete-orphan")
+    shopping_list = relationship("ShoppingList", back_populates="user", cascade="all, delete-orphan")
+
+
 class Meal(Base):
     __tablename__ = "meals"
     id = Column(Integer, primary_key=True, index=True)
