@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 
 class UserBase(BaseModel):
     name: str
@@ -16,7 +16,7 @@ class User(UserBase):
 
 class MealBase(BaseModel):
     name: str
-    ingredients: str
+    ingredients: Dict[str, int]  # Updated to match JSON type
     calories: int
 
 class Meal(MealBase):
@@ -39,3 +39,24 @@ class ShoppingList(BaseModel):
 
     class Config:
         from_attributes = True
+
+# New Nutrition schema
+class Nutrition(BaseModel):
+    food: str
+    quantity: int
+    calories: int
+    protein: int
+    fat: int
+    sugars: int
+    carbs: int
+
+    class Config:
+        from_attributes = True
+
+class RecipeNutrition(BaseModel):
+    ingredients: List[str]
+    calories: int
+    protein: int
+    fat: int
+    sugars: int
+    carbs: int

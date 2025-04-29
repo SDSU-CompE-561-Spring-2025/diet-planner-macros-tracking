@@ -4,3 +4,5 @@ python-dotenv
 pydantic-settings
 psycopg2-binary
 sqlalchemy
+requests
+python-multipart  # Add this line

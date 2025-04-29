@@ -98,3 +98,112 @@ Run the tests using `pytest`:
 ```bash
 pytest
 ```
+
+# Summary of Problems and Solutions
+
+## 1. PostgreSQL Not Running Locally
+
+- **Problem**: PostgreSQL was not running on the host machine, and attempts to start it using `brew services` failed.
+- **Solution**: Used Docker to run PostgreSQL instead of relying on the local installation.
+- **Commands**:
+  docker run --name postgres -e POSTGRES_USER=diet_user -e POSTGRES_PASSWORD=diet_password -e POSTGRES_DB=diet_planner -p 5432:5432 -d postgres:14
+
+---
+
+## 2. Port 5432 Already in Use
+
+- **Problem**: The PostgreSQL container failed to start because port `5432` was already allocated by another process or container.
+- **Solution**: Stopped and removed the conflicting container, then restarted the services.
+- **Commands**:
+  docker stop postgres
+  docker rm postgres
+  docker container prune
+  docker-compose up --build
+
+---
+
+## 3. `.env` File Parsing Error
+
+- **Problem**: Docker Compose failed to read the `.env` file due to invalid SQL commands (`CREATE DATABASE`) being included in the file.
+- **Solution**: Moved SQL commands to a separate `init.sql` file and kept only valid key-value pairs in the `.env` file.
+- **Commands**:
+  - Updated `.env`:
+    SQLALCHEMY_DATABASE_URL=postgresql://diet_user:diet_password@localhost:5432/diet_planner
+    SECRET_KEY="SBBAUGSTEELE"
+    POSTGRES_USER=diet_user
+    POSTGRES_PASSWORD=diet_password
+    POSTGRES_DB=diet_planner
+  - Created `init.sql`:
+    CREATE DATABASE diet_planner;
+    CREATE USER diet_user WITH PASSWORD 'diet_password';
+    GRANT ALL PRIVILEGES ON DATABASE diet_planner TO diet_user;
+  - Updated `docker-compose.yml`:
+    volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+---
+
+## 4. Port 8000 Already in Use
+
+- **Problem**: The application container failed to start because port `8000` was already allocated by another container.
+- **Solution**: Stopped and removed the conflicting container, then restarted the services. Alternatively, mapped the application to a different host port.
+- **Commands**:
+  docker ps
+  docker stop elated_boyd
+  docker rm elated_boyd
+  docker-compose up --build
+  - **Alternative (Change Port)**:
+    Updated `docker-compose.yml`:
+    ports:
+    - "8080:8000"
+
+---
+
+## 5. Docker Daemon Not Running
+
+- **Problem**: Docker commands failed with the error `Cannot connect to the Docker daemon`.
+- **Solution**: Started Docker Desktop to ensure the Docker daemon was running.
+- **Commands**:
+  open /Applications/Docker.app
+  docker info
+
+---
+
+## 6. Docker Compose Version Warning
+
+- **Problem**: Warning about the `version` attribute in `docker-compose.yml` being obsolete.
+- **Solution**: Removed the `version` attribute from `docker-compose.yml`.
+- **Commands**:
+  - Updated `docker-compose.yml`:
+    # Removed the `version` attribute
+
+---
+
+## 7. Application Failing to Connect to PostgreSQL
+
+- **Problem**: The application failed to connect to the PostgreSQL database with the error `connection refused`.
+- **Solution**: Ensured the PostgreSQL container was running and updated the `.env` file to use the correct database URL.
+- **Commands**:
+  docker ps
+  docker exec -it postgres psql -U diet_user -d diet_planner
+  - Updated `.env`:
+    SQLALCHEMY_DATABASE_URL=postgresql://diet_user:diet_password@localhost:5432/diet_planner
+
+---
+
+## 8. Cleaning Up Unused Containers
+
+- **Problem**: Too many unused containers were causing clutter and potential conflicts.
+- **Solution**: Pruned all stopped containers.
+- **Commands**:
+  docker container prune
+
+---
+
+## Final Working Commands
+
+- Start PostgreSQL and the application:
+  docker-compose up --build
+- Access the application:
+  - If using port `8000`: http://localhost:8000
+  - If using port `8080`: http://localhost:8080
