@@ -3,8 +3,8 @@ import requests
 
 router = APIRouter()
 
-YELP_API_KEY = "your_yelp_api_key"
-YELP_API_URL = "https://api.yelp.com/v3/businesses/search"
+NUTRITIONIX_API_KEY = "28bb7f2eebd765b0a774a576cc1a2ac0"  # Updated API key
+NUTRITIONIX_API_URL = "https://developer.nutritionix.com/admin/applications/1409625665426"
 
 @router.get("/nearby", responses={
     200: {"description": "List of nearby restaurants retrieved successfully"},
@@ -12,7 +12,7 @@ YELP_API_URL = "https://api.yelp.com/v3/businesses/search"
     500: {"description": "Failed to fetch data from Yelp"}
 })
 def get_nearby_restaurants(location: str, cuisine: str = None, price: str = None):
-    headers = {"Authorization": f"Bearer {YELP_API_KEY}"}
+    headers = {"Authorization": f"Bearer {NUTRITIONIX_API_KEY}"}
     params = {
         "term": cuisine if cuisine else "restaurant",
         "location": location,
@@ -20,7 +20,7 @@ def get_nearby_restaurants(location: str, cuisine: str = None, price: str = None
         "limit": 10
     }
 
-    response = requests.get(YELP_API_URL, headers=headers, params=params)
+    response = requests.get(NUTRITIONIX_API_URL, headers=headers, params=params)
 
     if response.status_code == 200:
         data = response.json()
