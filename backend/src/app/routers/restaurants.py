@@ -3,27 +3,68 @@ import requests
 
 router = APIRouter()
 
-YELP_API_KEY = "your_yelp_api_key"
-YELP_API_URL = "https://api.yelp.com/v3/businesses/search"
+NUTRITIONIX_APP_ID = "api_id"
+NUTRITIONIX_APP_KEY = "api_key"
+NUTRITIONIX_API_URL = "https://trackapi.nutritionix.com/v2/locations"
+GEOCODING_API_URL = "https://api.opencagedata.com/geocode/v1/json"
+GEOCODING_API_KEY = "api_key"  # Replace with your OpenCage API key
 
-@router.get("/nearby", responses={
-    200: {"description": "List of nearby restaurants retrieved successfully"},
-    400: {"description": "Invalid request parameters"},
-    500: {"description": "Failed to fetch data from Yelp"}
-})
-def get_nearby_restaurants(location: str, cuisine: str = None, price: str = None):
-    headers = {"Authorization": f"Bearer {YELP_API_KEY}"}
-    params = {
-        "term": cuisine if cuisine else "restaurant",
-        "location": location,
-        "price": price,
-        "limit": 10
-    }
-
-    response = requests.get(YELP_API_URL, headers=headers, params=params)
-
+def get_lat_lon(location: str):
+    """Fetch latitude and longitude for a given location using OpenCage Geocoder."""
+    response = requests.get(
+        GEOCODING_API_URL,
+        params={"q": location, "key": GEOCODING_API_KEY}
+    )
     if response.status_code == 200:
         data = response.json()
-        return {"restaurants": data["businesses"]}
+        if data["results"]:
+            lat = data["results"][0]["geometry"]["lat"]
+            lon = data["results"][0]["geometry"]["lng"]
+            return lat, lon
+        else:
+            raise HTTPException(status_code=404, detail="Location not found")
     else:
-        raise HTTPException(status_code=500, detail="Failed to fetch data from Yelp")
+        raise HTTPException(status_code=500, detail="Failed to fetch geocoding data")
+
+@router.get("/nearby")
+def get_nearby_restaurants(location: str, cuisine: str = None, price: str = None):
+    # Get latitude and longitude for the location
+    latitude, longitude = get_lat_lon(location)
+
+    # Prepare parameters for NutritionX API
+    params = {
+        "ll": f"{latitude},{longitude}",
+        "distance": 10,  # Search radius in miles
+        "limit": 10
+    }
+    
+    if cuisine:
+        params["term"] = cuisine
+    
+    if price:
+        params["price"] = price
+
+    headers = {
+        "x-app-id": NUTRITIONIX_APP_ID,
+        "x-app-key": NUTRITIONIX_APP_KEY,
+    }
+
+    # Log the request details
+    print(f"Request URL: {NUTRITIONIX_API_URL}")
+    print(f"Request Headers: {headers}")
+    print(f"Request Params: {params}")
+
+    response = requests.get(NUTRITIONIX_API_URL, headers=headers, params=params)
+
+    # Log the response for debugging
+    print(f"NutritionX Response Status Code: {response.status_code}")
+    print(f"NutritionX Response Text: {response.text}")
+
+    if response.status_code == 200:
+        try:
+            data = response.json()
+            return {"restaurants": data.get("businesses", [])}
+        except ValueError:
+            raise HTTPException(status_code=500, detail="Invalid JSON response from NutritionX")
+    else:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch data from NutritionX: {response.text}")
