@@ -1,28 +1,10 @@
-import React from "react";
-import Link from "next/link";
-
-const Home = () => {
+export default function Home() {
   return (
-    <div>
-      <h1>Welcome to the Diet Planner</h1>
-      <nav>
-        <ul>
-          <li>
-            <Link href="/meal-plans">Meal Plans</Link>
-          </li>
-          <li>
-            <Link href="/shopping-list">Shopping List</Link>
-          </li>
-          <li>
-            <Link href="/nutrition">Nutrition</Link>
-          </li>
-          <li>
-            <Link href="/restaurants">Nearby Restaurants</Link>
-          </li>
-        </ul>
-      </nav>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black px-4 text-center">
+      <h1 className="text-4xl font-extrabold mb-3">Welcome to the Diet Planner</h1>
+      <p className="text-lg text-gray-700 mb-6 max-w-md">
+        Plan your meals, track nutrition, and explore nearby food options — all in one place.
+      </p>
     </div>
   );
-};
-
-export default Home;
+}

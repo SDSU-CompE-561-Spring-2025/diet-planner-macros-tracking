@@ -1,0 +1,46 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+
+  backend:
+    container_name: backend-app
+    build:
+      context: ./backend
+    ports:
+      - "8081:8000" # Updated to avoid conflicts
+    environment:
+      - SQLALCHEMY_DATABASE_URL=postgresql://diet_user:diet_password@db:5432/diet_planner
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:14
+    container_name: backend-db
+    environment:
+      POSTGRES_USER: diet_user
+      POSTGRES_PASSWORD: diet_password
+      POSTGRES_DB: diet_planner
+    ports:
+      - "5434:5432" # Expose port 5432 for the database
+    volumes:
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize the database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

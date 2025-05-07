@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../src/services/api";
 
 export default function Meals() {
   const [meals, setMeals] = useState([]);
