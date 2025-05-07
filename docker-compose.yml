@@ -1,34 +1,25 @@
 services:
   frontend:
-    image: node:18 # Use a Node.js image
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     working_dir: /app
     volumes:
-      - .:/app # Mount the current directory to /app in the container
-      - /app/node_modules # Prevent node_modules conflicts
+      - ./frontend:/app
+      - /app/node_modules
     ports:
-      - "3000:3000" # Expose port 3000 for the frontend
-    # command: sh -c "npm install && npm run dev" # Install dependencies and run the development server
+      - "3000:3000"
+    command: npm run dev
     environment:
       - NODE_ENV=development
     depends_on:
       - backend
-    build: .
-    develop:
-      watch:
-        - action: sync
-          path: ./web
-          target: /app/web
-          ignore:
-            - node_modules/
-        - action: sync+restart
-          path: ./proxy/nginx.conf
-          target: /etc/nginx/conf.d/default.conf
 
 
   backend:
     container_name: backend-app
     build:
-      context: ../backend
+      context: ./backend
     ports:
       - "8081:8000" # Updated to avoid conflicts
     environment:
@@ -47,7 +38,7 @@ services:
     ports:
       - "5434:5432" # Expose port 5432 for the database
     volumes:
-      - ../backend/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize the database
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize the database
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
