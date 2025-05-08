@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-heading: 'Marcellus', serif;
+  --font-body: 'Mulish', sans-serif;
+
+  --color-forest: #173505;
+  --color-cream: #fbf7e4;
+  --color-ivory: #f5f1cd;
+  --color-amber: #ffc95c;
+  --color-orange: #ef9821;
+  --color-bright-orange: #f46b24;
+  --color-raspberry: #c92e52;
+  --color-mint: #96ae6d;
+  --color-olive: #7c9853;
+  --color-moss: #425422;
+}
+
 body {
-  @apply bg-white text-black antialiased;
+  @apply font-body bg-cream text-forest;
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-forest);
+}
+
+h1, h2, h3, h4 {
+  @apply font-heading;
 }
