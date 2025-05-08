@@ -21,7 +21,7 @@ export default function Restaurants() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to fetch restaurants. Please try again."
+        "Failed to fetch restaurants. Please try again."
       );
     } finally {
       setLoading(false);
@@ -63,60 +63,24 @@ export default function Restaurants() {
       </div>
       {loading && <p className="mt-4 text-blue-500">Loading...</p>}
       {error && <p className="mt-4 text-red-500">{error}</p>}
-
-      {/* Leaflet map container */}
-      {restaurants.length > 0 && (
-        <MapContainer
-          center={[restaurants[0].location.latitude, restaurants[0].location.longitude]}
-          zoom={13}
-          style={{ width: "100%", height: "400px" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {restaurants.map((restaurant) => (
-            <Marker
-              key={restaurant.id}
-              position={[
-                restaurant.location.latitude,
-                restaurant.location.longitude,
-              ]}
-              icon={new L.Icon({
-                iconUrl: require("leaflet/dist/images/marker-icon.png"),
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-              })}
-            >
-              <Popup>
-                <strong>{restaurant.name}</strong>
-                <p>{restaurant.location.address1}</p>
-                {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
-                {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      )}
-
       <ul className="mt-4">
         {restaurants.length > 0
           ? restaurants.map((restaurant) => (
               <li
                 key={restaurant.id}
-                className="mb-4 p-4 border rounded shadow"
+                className="mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
               >
-                <strong>{restaurant.name}</strong>
+                <h2 className="text-xl font-semibold mb-1">{restaurant.name}</h2>
                 <p>{restaurant.location.address1}</p>
                 {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
                 {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
               </li>
             ))
-          : !loading && (
-              <p className="mt-4 text-gray-500">No restaurants found.</p>
-            )}
-      </ul>
+          ) : (
+            !loading && <p className="text-gray-500">No restaurants found.</p>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }
