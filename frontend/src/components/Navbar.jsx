@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -8,8 +9,18 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex-shrink-0 text-xl font-bold text-gray-800">
-            <Link href="/">Diet Planner</Link>
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link href="/">
+              <Image
+                src="/images/logo.png"
+                alt="Diet Planner Logo"
+                width={90} // try 60–80px range
+                height={90}
+                className="object-contain"
+                priority
+              />
+            </Link>
           </div>
 
           {/* Desktop Menu */}
