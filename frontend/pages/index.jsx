@@ -1,7 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import Map from "../src/components/Map";
+import "leaflet/dist/leaflet.css";  // Import Leaflet styles
+import { useEffect } from "react";
 
 export default function Home() {
+  const [location, setLocation] = useState({ lat: 40.7128, lng: -74.0060 }); // Default to New York
+
+  const handleLocationChange = (lat, lng) => {
+    setLocation({ lat, lng });  // Update location (you can make this dynamic later)
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-ivory text-forest px-4 text-center">
       <h1 className="text-4xl font-extrabold mb-3">Welcome to the Diet Planner</h1>
@@ -9,10 +19,16 @@ export default function Home() {
         Plan your meals, track nutrition, and explore nearby food options — all in one place.
       </p>
 
+      {/* Map Section */}
+      <div className="w-full max-w-4xl mt-10">
+        <Map location={location} /> {/* Pass location prop to Map */}
+      </div>
+
+      {/* Main Content Section */}
       <section className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {/* Personalized Meal Plans */}
         <Link
-          href="/meal-plans" // You can change this path later
+          href="/meal-plans" 
           className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-lg transition"
         >
           <Image
@@ -48,7 +64,7 @@ export default function Home() {
 
         {/* How It Works */}
         <Link
-          href="/how-it-works" // You can change this path later
+          href="/how-it-works" 
           className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-lg transition"
         >
           <Image
