@@ -1,12 +1,12 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-6">
+    <footer className="bg-moss text-ivory font-inherit py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Section */}
           <div>
             <h3 className="text-lg font-bold mb-2">About</h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-ivory/80">
               E-Meal helps you plan your meals, track nutrition, and explore
               nearby food options — all in one place.
             </p>
@@ -20,7 +20,7 @@ export default function Footer() {
                 Email:{" "}
                 <a
                   href="mailto:support@emeal.com"
-                  className="text-blue-400 hover:underline"
+                  className="text-amber hover:underline"
                 >
                   support@emeal.com
                 </a>
@@ -29,7 +29,7 @@ export default function Footer() {
                 Phone:{" "}
                 <a
                   href="tel:+1234567890"
-                  className="text-blue-400 hover:underline"
+                  className="text-amber hover:underline"
                 >
                   +1 (234) 567-890
                 </a>
@@ -43,22 +43,22 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-2">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/about" className="text-blue-400 hover:underline">
+                <a href="/about" className="text-amber hover:underline">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-blue-400 hover:underline">
+                <a href="/privacy" className="text-amber hover:underline">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-blue-400 hover:underline">
+                <a href="/terms" className="text-amber hover:underline">
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="/contact" className="text-blue-400 hover:underline">
+                <a href="/contact" className="text-amber hover:underline">
                   Contact Us
                 </a>
               </li>
@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-ivory/60">
           &copy; {new Date().getFullYear()} E-Meal. All rights reserved.
         </div>
       </div>

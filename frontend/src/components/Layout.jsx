@@ -1,12 +1,12 @@
 import Navbar from "./Navbar";
-import Footer from "./Footer"; // Import the Footer component
+import Footer from "./Footer";
 
 export default function Layout({ children }) {
   return (
-    <>
+    <div className="min-h-screen font-body bg-cream text-forest">
       <Navbar />
-      <main className="min-h-screen">{children}</main>
-      <Footer /> {/* Add the Footer here */}
-    </>
+      <main>{children}</main>
+      <Footer />
+    </div>
   );
 }
