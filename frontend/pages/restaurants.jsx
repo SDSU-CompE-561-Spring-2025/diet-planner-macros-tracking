@@ -18,7 +18,7 @@ export default function Restaurants() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to fetch restaurants. Please try again."
+        "Failed to fetch restaurants. Please try again."
       );
     } finally {
       setLoading(false);
@@ -32,51 +32,57 @@ export default function Restaurants() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Nearby Restaurants</h1>
-      <input
-        type="text"
-        placeholder="Enter your location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className="p-2 border rounded mb-4 w-full"
-        aria-label="Location input"
-      />
-      <div className="flex space-x-2">
-        <button
-          onClick={fetchRestaurants}
-          className="bg-blue-500 text-white p-2 rounded w-full"
-          aria-label="Search restaurants"
-        >
-          Search
-        </button>
-        <button
-          onClick={clearSearch}
-          className="bg-gray-500 text-white p-2 rounded w-full"
-          aria-label="Clear search"
-        >
-          Clear
-        </button>
-      </div>
-      {loading && <p className="mt-4 text-blue-500">Loading...</p>}
-      {error && <p className="mt-4 text-red-500">{error}</p>}
-      <ul className="mt-4">
-        {restaurants.length > 0
-          ? restaurants.map((restaurant) => (
+    <div className="flex flex-col items-center min-h-screen bg-ivory px-4 py-10 text-forest">
+      <h1 className="text-4xl font-extrabold mb-6 text-center">Nearby Restaurants</h1>
+
+      <div className="w-full max-w-xl">
+        <input
+          type="text"
+          placeholder="Enter your location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-forest"
+          aria-label="Location input"
+        />
+
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={fetchRestaurants}
+            className="w-full bg-forest text-white font-semibold py-3 rounded hover:bg-green-700 transition"
+            aria-label="Search restaurants"
+          >
+            Search
+          </button>
+          <button
+            onClick={clearSearch}
+            className="w-full bg-gray-500 text-white font-semibold py-3 rounded hover:bg-gray-600 transition"
+            aria-label="Clear search"
+          >
+            Clear
+          </button>
+        </div>
+
+        {loading && <p className="text-blue-500 mb-4">Loading...</p>}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <ul>
+          {restaurants.length > 0 ? (
+            restaurants.map((restaurant) => (
               <li
                 key={restaurant.id}
-                className="mb-4 p-4 border rounded shadow"
+                className="mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
               >
-                <strong>{restaurant.name}</strong>
+                <h2 className="text-xl font-semibold mb-1">{restaurant.name}</h2>
                 <p>{restaurant.location.address1}</p>
                 {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
                 {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
               </li>
             ))
-          : !loading && (
-              <p className="mt-4 text-gray-500">No restaurants found.</p>
-            )}
-      </ul>
+          ) : (
+            !loading && <p className="text-gray-500">No restaurants found.</p>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }
