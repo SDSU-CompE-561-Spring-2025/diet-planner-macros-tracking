@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import api from "../src/services/api";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet"; // Leaflet for marker icon management
 
 export default function Restaurants() {
   const [location, setLocation] = useState("");
@@ -60,6 +63,43 @@ export default function Restaurants() {
       </div>
       {loading && <p className="mt-4 text-blue-500">Loading...</p>}
       {error && <p className="mt-4 text-red-500">{error}</p>}
+
+      {/* Leaflet map container */}
+      {restaurants.length > 0 && (
+        <MapContainer
+          center={[restaurants[0].location.latitude, restaurants[0].location.longitude]}
+          zoom={13}
+          style={{ width: "100%", height: "400px" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {restaurants.map((restaurant) => (
+            <Marker
+              key={restaurant.id}
+              position={[
+                restaurant.location.latitude,
+                restaurant.location.longitude,
+              ]}
+              icon={new L.Icon({
+                iconUrl: require("leaflet/dist/images/marker-icon.png"),
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+              })}
+            >
+              <Popup>
+                <strong>{restaurant.name}</strong>
+                <p>{restaurant.location.address1}</p>
+                {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
+                {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      )}
+
       <ul className="mt-4">
         {restaurants.length > 0
           ? restaurants.map((restaurant) => (

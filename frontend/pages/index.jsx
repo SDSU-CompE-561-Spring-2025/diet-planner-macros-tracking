@@ -1,10 +1,85 @@
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import Map from "../src/components/Map";
+import "leaflet/dist/leaflet.css";  // Import Leaflet styles
+import { useEffect } from "react";
+
 export default function Home() {
+  const [location, setLocation] = useState({ lat: 40.7128, lng: -74.0060 }); // Default to New York
+
+  const handleLocationChange = (lat, lng) => {
+    setLocation({ lat, lng });  // Update location (you can make this dynamic later)
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-ivory text-forest px-4 text-center">
       <h1 className="text-4xl font-extrabold mb-3">Welcome to the Diet Planner</h1>
       <p className="text-lg text-forest mb-6 max-w-md">
         Plan your meals, track nutrition, and explore nearby food options — all in one place.
       </p>
+
+      {/* Map Section */}
+      <div className="w-full max-w-4xl mt-10">
+        <Map location={location} /> {/* Pass location prop to Map */}
+      </div>
+
+      {/* Main Content Section */}
+      <section className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        {/* Personalized Meal Plans */}
+        <Link
+          href="/meal-plans" 
+          className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-lg transition"
+        >
+          <Image
+            src="/images/meal1.png"
+            alt="Personalized Meal Plans"
+            width={400}
+            height={300}
+            className="rounded-md"
+          />
+          <h2 className="text-xl font-semibold mt-4">Personalized Meal Plans</h2>
+          <p className="text-gray-700 mt-2">
+            Tell us your dietary needs & budget. Our AI suggests the best meals tailored for you!
+          </p>
+        </Link>
+
+        {/* Find Nearby Restaurants */}
+        <Link
+          href="/restaurants"
+          className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-lg transition"
+        >
+          <Image
+            src="/images/meal2.png"
+            alt="Find Nearby Restaurants"
+            width={400}
+            height={300}
+            className="rounded-md"
+          />
+          <h2 className="text-xl font-semibold mt-4">Find Nearby Restaurants</h2>
+          <p className="text-gray-700 mt-2">
+            Craving something specific? Discover top-rated restaurants based on your taste & location.
+          </p>
+        </Link>
+
+        {/* How It Works */}
+        <Link
+          href="/how-it-works" 
+          className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:shadow-lg transition"
+        >
+          <Image
+            src="/images/meal3.png"
+            alt="How It Works"
+            width={400}
+            height={300}
+            className="rounded-md"
+          />
+          <h2 className="text-xl font-semibold mt-4">How It Works</h2>
+          <p className="text-gray-700 mt-2">
+            We believe that healthy eating and dining experiences should be accessible, personalized, and effortless.
+          </p>
+        </Link>
+      </section>
     </div>
   );
 }
