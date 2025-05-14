@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # Include routers - ensure paths start with forward slashes
-app.include_router(auth, prefix="/auth", tags=["auth"])
+app.include_router(auth, prefix="/api/auth", tags=["auth"])
 app.include_router(restaurants, prefix="/api/restaurants", tags=["restaurants"])
 app.include_router(recipes, prefix="/api/recipes", tags=["recipes"])
 app.include_router(meal_preferences, prefix="/api/preferences", tags=["preferences"])

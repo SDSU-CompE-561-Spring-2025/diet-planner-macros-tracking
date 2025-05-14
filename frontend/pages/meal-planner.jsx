@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Layout from '../components/Layout';
 import api from "../src/services/api";
 import Link from 'next/link';
 
@@ -210,72 +209,63 @@ export default function MealPlanner() {
   );
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-forest">Meal Planner</h1>
-          <div className="flex items-center space-x-4">
-            <input
-              type="date"
-              value={selectedDate.toISOString().split('T')[0]}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="border rounded p-2"
-            />
-            <button
-              onClick={generateMealPlan}
-              disabled={loading}
-              className="bg-forest text-white px-6 py-2 rounded-lg hover:bg-forest/90 transition disabled:opacity-50"
-            >
-              {loading ? 'Generating...' : 'Generate Plan'}
-            </button>
-          </div>
-        </div>
-
-        {!preferences && (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">
-                  Please set your meal preferences first to get personalized recommendations.{' '}
-                  <Link href="/meal-preferences" className="font-medium underline text-yellow-700 hover:text-yellow-600">
-                    Set Preferences
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-8">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 gap-6">
-          <MealSection title="Breakfast" meals={mealPlan.breakfast} />
-          <MealSection title="Lunch" meals={mealPlan.lunch} />
-          <MealSection title="Dinner" meals={mealPlan.dinner} />
-          <MealSection title="Snacks" meals={mealPlan.snacks} />
-        </div>
-
-        <div className="mt-8 flex justify-end">
-          <Link
-            href="/shopping-list"
-            className="text-forest hover:text-forest/80 flex items-center"
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-forest">Meal Planner</h1>
+        <div className="flex items-center space-x-4">
+          <input
+            type="date"
+            value={selectedDate.toISOString().split('T')[0]}
+            onChange={(e) => setSelectedDate(new Date(e.target.value))}
+            className="border rounded p-2"
+          />
+          <button
+            onClick={generateMealPlan}
+            disabled={loading}
+            className="bg-forest text-white px-6 py-2 rounded-lg hover:bg-forest/90 transition disabled:opacity-50"
           >
-            <span>View Shopping List</span>
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+            {loading ? 'Generating...' : 'Generate Plan'}
+          </button>
         </div>
       </div>
-    </Layout>
+
+      {!preferences && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                Please set your meal preferences first to get personalized recommendations.{' '}
+                <Link href="/meal-preferences" className="font-medium underline text-yellow-700 hover:text-yellow-600">
+                  Set Preferences
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-8">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <MealSection title="Breakfast" meals={mealPlan.breakfast} />
+        <MealSection title="Lunch" meals={mealPlan.lunch} />
+        <MealSection title="Dinner" meals={mealPlan.dinner} />
+        <MealSection title="Snacks" meals={mealPlan.snacks} />
+      </div>
+
+      <div className="mt-8 bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-forest mb-4">Daily Summary</h2>
+        <p className="text-lg">Total Calories: {totalCalories} kcal</p>
+      </div>
+    </div>
   );
 } 

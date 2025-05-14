@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     const token = Cookies.get('token') || localStorage.getItem('token');
     if (token) {
       setToken(token); // Set the token in axios headers
-      api.get('/auth/me')
+      api.get('/api/auth/me')
         .then(response => {
           setUser(response.data);
         })
@@ -53,13 +53,13 @@ export function AuthProvider({ children }) {
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await api.post('/auth/login', formData);
+      const response = await api.post('/api/auth/login', formData);
       const { access_token } = response.data;
       
       setToken(access_token); // Set token and update headers
       
       // Fetch user data after successful login
-      const userResponse = await api.get('/auth/me');
+      const userResponse = await api.get('/api/auth/me');
       setUser(userResponse.data);
       
       return { success: true };
@@ -75,7 +75,7 @@ export function AuthProvider({ children }) {
   const register = async (userData) => {
     try {
       // Register the user
-      const response = await api.post('/auth/register', {
+      const response = await api.post('/api/auth/register', {
         email: userData.email,
         password: userData.password,
         name: userData.name

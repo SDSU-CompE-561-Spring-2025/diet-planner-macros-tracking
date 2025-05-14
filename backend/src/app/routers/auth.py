@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     tags=["authentication"]
 )
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 @router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
