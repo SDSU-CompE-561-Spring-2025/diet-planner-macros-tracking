@@ -7,7 +7,7 @@ def fetch_food_nutrition(food: str, quantity: int, api_key: str):
     """
     url = "https://trackapi.nutritionix.com/v2/natural/nutrients"
     headers = {
-        "x-app-id": "YOUR_APP_ID",
+        "x-app-id": "8a13533e",
         "x-app-key": api_key,
         "Content-Type": "application/json"
     }
@@ -32,7 +32,7 @@ def fetch_recipe_nutrition(ingredients: list, api_key: str):
     """
     url = "https://trackapi.nutritionix.com/v2/natural/nutrients"
     headers = {
-        "x-app-id": "YOUR_APP_ID",
+        "x-app-id": "8a13533e",
         "x-app-key": api_key,
         "Content-Type": "application/json"
     }
@@ -49,4 +49,4 @@ def fetch_recipe_nutrition(ingredients: list, api_key: str):
         "sugars": sum(item.get("nf_sugars", 0) for item in data["foods"]),
         "carbs": sum(item.get("nf_total_carbohydrate", 0) for item in data["foods"])
     }
-    return total_nutrients
+    return total_nutrients 

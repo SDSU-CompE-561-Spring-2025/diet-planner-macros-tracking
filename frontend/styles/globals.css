@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply text-gray-800;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-forest text-white hover:bg-forest/90;
+  }
+  
+  .btn-secondary {
+    @apply bg-mint text-forest hover:bg-mint/90;
+  }
+}
+
 :root {
   --font-heading: 'Marcellus', serif;
   --font-body: 'Mulish', sans-serif;

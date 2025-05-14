@@ -40,6 +40,7 @@ DROP TABLE IF EXISTS shopping_list CASCADE;
 DROP TABLE IF EXISTS meal_plans CASCADE;
 DROP TABLE IF EXISTS meals CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS meal_preferences CASCADE;
 
 -- Create tables
 CREATE TABLE users (
@@ -80,6 +81,22 @@ CREATE TABLE nutrition (
     fat INTEGER NOT NULL,
     sugars INTEGER NOT NULL,
     carbs INTEGER NOT NULL
+);
+
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create meal_preferences table
+CREATE TABLE meal_preferences (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    dining_preference VARCHAR(255) NOT NULL,
+    dietary_restrictions VARCHAR(255)[] NOT NULL,
+    cuisine_preferences VARCHAR(255)[] NOT NULL,
+    meal_types VARCHAR(255)[] NOT NULL,
+    budget VARCHAR(50) NOT NULL,
+    cooking_time VARCHAR(50),
+    UNIQUE(user_id)
 );
 
 -- Grant privileges on all tables to diet_user

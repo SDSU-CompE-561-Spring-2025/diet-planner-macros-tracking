@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Float, Table
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Float, Table, Boolean, ARRAY
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -11,6 +11,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     meals = relationship("Meal", back_populates="user")
+    meal_preferences = relationship("MealPreferences", back_populates="user", uselist=False)
 
 class Meal(Base):
     __tablename__ = "meals"
@@ -45,3 +46,17 @@ class Nutrition(Base):
     fat = Column(Integer, nullable=False)
     sugars = Column(Integer, nullable=False)
     carbs = Column(Integer, nullable=False)
+
+class MealPreferences(Base):
+    __tablename__ = "meal_preferences"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    dining_preference = Column(String)
+    dietary_restrictions = Column(ARRAY(String))
+    cuisine_preferences = Column(ARRAY(String))
+    meal_types = Column(ARRAY(String))
+    budget = Column(String)
+    cooking_time = Column(String)
+
+    user = relationship("User", back_populates="meal_preferences")

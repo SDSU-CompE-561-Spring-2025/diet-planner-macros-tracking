@@ -67,3 +67,21 @@ class RecipeNutrition(BaseModel):
     fat: int
     sugars: int
     carbs: int
+
+class MealPreferencesBase(BaseModel):
+    dining_preference: str
+    dietary_restrictions: List[str]
+    cuisine_preferences: List[str]
+    meal_types: List[str]
+    budget: str
+    cooking_time: Optional[str] = None
+
+class MealPreferencesCreate(MealPreferencesBase):
+    pass
+
+class MealPreferencesResponse(MealPreferencesBase):
+    id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True

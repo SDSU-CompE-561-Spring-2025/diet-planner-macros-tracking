@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import crud, schemas, models
 from ..database import get_db
-from external_api import fetch_food_nutrition, fetch_recipe_nutrition
+from ..external_api import fetch_food_nutrition, fetch_recipe_nutrition
 router = APIRouter()
 
 @router.post("/", response_model=schemas.Nutrition, responses={
@@ -18,9 +18,8 @@ def get_food_nutrition(food: str, quantity: int, db: Session = Depends(get_db)):
             return nutrition
 
         # Fetch nutrition data for the food item
-        app_id = "your_food_database_app_id"
-        app_key = "your_food_database_app_key"
-        data = fetch_food_nutrition(food, quantity, app_id, app_key)
+        app_key = "b8974401fbc6496bd62054667b5e009d"
+        data = fetch_food_nutrition(food, quantity, app_key)
 
         # Create new nutrition entry
         new_nutrition = models.Nutrition(
@@ -39,7 +38,7 @@ def get_food_nutrition(food: str, quantity: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/", responses={
+@router.post("/recipe", responses={
     200: {"description": "Recipe nutrition details retrieved successfully"},
     400: {"description": "Invalid request parameters"},
     500: {"description": "Internal server error"}
@@ -47,9 +46,8 @@ def get_food_nutrition(food: str, quantity: int, db: Session = Depends(get_db)):
 def get_recipe_nutrition(ingredients: list, db: Session = Depends(get_db)):
     try:
         # Fetch nutrition data for the recipe
-        app_id = "your_nutrition_analysis_app_id"
-        app_key = "your_nutrition_analysis_app_key"
-        data = fetch_recipe_nutrition(ingredients, app_id, app_key)
+        app_key = "b8974401fbc6496bd62054667b5e009d"
+        data = fetch_recipe_nutrition(ingredients, app_key)
 
         # Extract nutrition details
         calories = data.get("calories", 0)
