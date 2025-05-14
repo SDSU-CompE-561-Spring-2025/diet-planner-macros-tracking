@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from .. import crud, schemas, models
 from ..database import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["users"])
 
-@router.post("/", response_model=schemas.User, responses={
+@router.post("/", response_model=schemas.UserResponse, responses={
     200: {"description": "User created successfully"},
     400: {"description": "Email already registered"},
     500: {"description": "Internal server error"}
@@ -16,18 +17,23 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     return {"success": True, "user": crud.create_user(db=db, user=user)}
 
-@router.get("/{user_id}", response_model=schemas.User, responses={
+@router.get("/", response_model=List[schemas.UserResponse])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = db.query(models.User).offset(skip).limit(limit).all()
+    return users
+
+@router.get("/{user_id}", response_model=schemas.UserResponse, responses={
     200: {"description": "User retrieved successfully"},
     404: {"description": "User not found"},
     500: {"description": "Internal server error"}
 })
-def get_user(user_id: int, db: Session = Depends(get_db)):
+def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
+    if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return {"success": True, "user": db_user}
 
-@router.put("/{user_id}", response_model=schemas.User, responses={
+@router.put("/{user_id}", response_model=schemas.UserResponse, responses={
     200: {"description": "User updated successfully"},
     404: {"description": "User not found"},
     500: {"description": "Internal server error"}

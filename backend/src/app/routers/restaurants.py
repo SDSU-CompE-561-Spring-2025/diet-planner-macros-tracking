@@ -1,70 +1,104 @@
-from fastapi import APIRouter, HTTPException
-import requests
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
+from pydantic import BaseModel
+import httpx
+import os
+from math import radians, sin, cos, sqrt, atan2
 
-router = APIRouter()
+router = APIRouter(tags=["restaurants"])
 
-NUTRITIONIX_APP_ID = "api_id"
-NUTRITIONIX_APP_KEY = "api_key"
-NUTRITIONIX_API_URL = "https://trackapi.nutritionix.com/v2/locations"
-GEOCODING_API_URL = "https://api.opencagedata.com/geocode/v1/json"
-GEOCODING_API_KEY = "api_key"  # Replace with your OpenCage API key
+class Restaurant(BaseModel):
+    id: str
+    name: str
+    address: str
+    distance: float
+    nutritionScore: float
+    averageCalories: int
+    healthyOptionsCount: int
+    menuUrl: str
 
-def get_lat_lon(location: str):
-    """Fetch latitude and longitude for a given location using OpenCage Geocoder."""
-    response = requests.get(
-        GEOCODING_API_URL,
-        params={"q": location, "key": GEOCODING_API_KEY}
-    )
-    if response.status_code == 200:
-        data = response.json()
-        if data["results"]:
-            lat = data["results"][0]["geometry"]["lat"]
-            lon = data["results"][0]["geometry"]["lng"]
-            return lat, lon
-        else:
-            raise HTTPException(status_code=404, detail="Location not found")
-    else:
-        raise HTTPException(status_code=500, detail="Failed to fetch geocoding data")
+def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    R = 6371  # Earth's radius in kilometers
 
-@router.get("/nearby")
-def get_nearby_restaurants(location: str, cuisine: str = None, price: str = None):
-    # Get latitude and longitude for the location
-    latitude, longitude = get_lat_lon(location)
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
 
-    # Prepare parameters for NutritionX API
-    params = {
-        "ll": f"{latitude},{longitude}",
-        "distance": 10,  # Search radius in miles
-        "limit": 10
-    }
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    distance = R * c
+
+    return distance
+
+@router.get("/nearby", response_model=List[Restaurant])
+async def get_nearby_restaurants(
+    lat: float = Query(..., description="Latitude"),
+    lng: float = Query(..., description="Longitude"),
+    radius: float = Query(5.0, description="Search radius in kilometers")
+):
+    # In a real application, you would:
+    # 1. Use a restaurant API (like Google Places, Yelp, etc.)
+    # 2. Query a database of restaurant nutritional information
+    # 3. Combine and process the data
     
-    if cuisine:
-        params["term"] = cuisine
-    
-    if price:
-        params["price"] = price
+    # For demo purposes, we'll return mock data
+    mock_restaurants = [
+        {
+            "id": "1",
+            "name": "Green Kitchen",
+            "address": "123 Healthy St",
+            "distance": 0.8,
+            "nutritionScore": 9.2,
+            "averageCalories": 450,
+            "healthyOptionsCount": 15,
+            "menuUrl": "https://example.com/menu1"
+        },
+        {
+            "id": "2",
+            "name": "Fresh & Fit Cafe",
+            "address": "456 Fitness Ave",
+            "distance": 1.2,
+            "nutritionScore": 8.5,
+            "averageCalories": 520,
+            "healthyOptionsCount": 12,
+            "menuUrl": "https://example.com/menu2"
+        },
+        {
+            "id": "3",
+            "name": "Protein Paradise",
+            "address": "789 Muscle Rd",
+            "distance": 2.1,
+            "nutritionScore": 7.8,
+            "averageCalories": 650,
+            "healthyOptionsCount": 8,
+            "menuUrl": "https://example.com/menu3"
+        },
+        {
+            "id": "4",
+            "name": "Balanced Bowl",
+            "address": "321 Nutrition Blvd",
+            "distance": 3.5,
+            "nutritionScore": 8.9,
+            "averageCalories": 480,
+            "healthyOptionsCount": 18,
+            "menuUrl": "https://example.com/menu4"
+        },
+        {
+            "id": "5",
+            "name": "Macro Masters",
+            "address": "654 Diet Dr",
+            "distance": 4.2,
+            "nutritionScore": 8.1,
+            "averageCalories": 550,
+            "healthyOptionsCount": 10,
+            "menuUrl": "https://example.com/menu5"
+        }
+    ]
 
-    headers = {
-        "x-app-id": NUTRITIONIX_APP_ID,
-        "x-app-key": NUTRITIONIX_APP_KEY,
-    }
+    # Filter restaurants by radius
+    nearby_restaurants = [
+        restaurant for restaurant in mock_restaurants
+        if restaurant["distance"] <= radius
+    ]
 
-    # Log the request details
-    print(f"Request URL: {NUTRITIONIX_API_URL}")
-    print(f"Request Headers: {headers}")
-    print(f"Request Params: {params}")
-
-    response = requests.get(NUTRITIONIX_API_URL, headers=headers, params=params)
-
-    # Log the response for debugging
-    print(f"NutritionX Response Status Code: {response.status_code}")
-    print(f"NutritionX Response Text: {response.text}")
-
-    if response.status_code == 200:
-        try:
-            data = response.json()
-            return {"restaurants": data.get("businesses", [])}
-        except ValueError:
-            raise HTTPException(status_code=500, detail="Invalid JSON response from NutritionX")
-    else:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch data from NutritionX: {response.text}")
+    return nearby_restaurants

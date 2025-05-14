@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import Map from "../src/components/Map";
+import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";  // Import Leaflet styles
 import { useEffect } from "react";
+
+// Dynamically import the Map component with no SSR
+const Map = dynamic(
+  () => import("../src/components/Map"),
+  { ssr: false }
+);
 
 export default function Home() {
   const [location, setLocation] = useState({ lat: 40.7128, lng: -74.0060 }); // Default to New York

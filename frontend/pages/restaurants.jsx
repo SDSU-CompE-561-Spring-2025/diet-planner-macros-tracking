@@ -1,127 +1,147 @@
-import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import api from "../src/services/api";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
 export default function Restaurants() {
-  const [location, setLocation] = useState("");
   const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [location, setLocation] = useState(null);
+  const [searchRadius, setSearchRadius] = useState(5); // in kilometers
 
-  const fetchRestaurants = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await api.get(`/restaurants/nearby?location=${location}`);
-      setRestaurants(response.data.restaurants);
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Failed to fetch restaurants. Please try again."
+  useEffect(() => {
+    // Get user's location when component mounts
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          fetchNearbyRestaurants(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          setError("Please enable location services to find nearby restaurants.");
+          setLoading(false);
+        }
       );
-    } finally {
+    } else {
+      setError("Geolocation is not supported by your browser.");
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchNearbyRestaurants = async (lat, lng) => {
+    try {
+      const response = await api.get(`/api/restaurants/nearby`, {
+        params: {
+          lat,
+          lng,
+          radius: searchRadius
+        }
+      });
+      setRestaurants(response.data);
+      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch nearby restaurants. Please try again later.");
       setLoading(false);
     }
   };
 
-  const clearSearch = () => {
-    setLocation("");
-    setRestaurants([]);
-    setError("");
+  const handleRadiusChange = (e) => {
+    const newRadius = parseInt(e.target.value);
+    setSearchRadius(newRadius);
+    if (location) {
+      fetchNearbyRestaurants(location.lat, location.lng);
+    }
   };
 
   return (
-    <div className="p-6 w-full max-w-4xl mx-auto">
-      <h1 className="text-4xl font-extrabold mb-6 text-center">Nearby Restaurants</h1>
-
-      <input
-        type="text"
-        placeholder="Enter your location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className="w-full p-3 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-forest"
-        aria-label="Location input"
-      />
-
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={fetchRestaurants}
-          className="w-full bg-forest text-white font-semibold py-3 rounded hover:bg-green-700 transition"
-          aria-label="Search restaurants"
-        >
-          Search
-        </button>
-        <button
-          onClick={clearSearch}
-          className="w-full bg-gray-500 text-white font-semibold py-3 rounded hover:bg-gray-600 transition"
-          aria-label="Clear search"
-        >
-          Clear
-        </button>
-      </div>
-
-      {loading && <p className="text-blue-500 mb-4">Loading...</p>}
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-
-      {restaurants.length > 0 && (
-        <div className="space-y-6">
-          <ul>
-            {restaurants.map((restaurant) => (
-              <li
-                key={restaurant.id}
-                className="mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
-              >
-                <h2 className="text-xl font-semibold mb-1">{restaurant.name}</h2>
-                <p>{restaurant.location.address1}</p>
-                {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
-                {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
-              </li>
-            ))}
-          </ul>
-
-          <MapContainer
-            center={[
-              restaurants[0].location.latitude,
-              restaurants[0].location.longitude,
-            ]}
-            zoom={13}
-            style={{ width: "100%", height: "400px" }}
+    <div className="min-h-screen bg-ivory p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-forest mb-8">Nearby Restaurants</h1>
+        
+        {/* Search radius control */}
+        <div className="mb-6">
+          <label className="block text-forest font-semibold mb-2">Search Radius (km)</label>
+          <select
+            value={searchRadius}
+            onChange={handleRadiusChange}
+            className="w-48 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-forest"
           >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {restaurants.map((restaurant) => (
-              <Marker
-                key={restaurant.id}
-                position={[
-                  restaurant.location.latitude,
-                  restaurant.location.longitude,
-                ]}
-                icon={new L.Icon({
-                  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-                  iconSize: [25, 41],
-                  iconAnchor: [12, 41],
-                  popupAnchor: [1, -34],
-                })}
-              >
-                <Popup>
-                  <strong>{restaurant.name}</strong>
-                  <p>{restaurant.location.address1}</p>
-                  {restaurant.rating && <p>Rating: {restaurant.rating} / 5</p>}
-                  {restaurant.phone && <p>Phone: {restaurant.phone}</p>}
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+            <option value="1">1 km</option>
+            <option value="5">5 km</option>
+            <option value="10">10 km</option>
+            <option value="20">20 km</option>
+          </select>
         </div>
-      )}
 
-      {!loading && restaurants.length === 0 && (
-        <p className="text-gray-500">No restaurants found.</p>
-      )}
+        {/* Error message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {/* Loading state */}
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-forest"></div>
+          </div>
+        )}
+
+        {/* Restaurant list */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto max-h-[calc(100vh-300px)]">
+            {restaurants.map((restaurant) => (
+              <div
+                key={restaurant.id}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              >
+                <h3 className="text-xl font-bold text-forest mb-2">{restaurant.name}</h3>
+                <p className="text-gray-600 mb-4">{restaurant.address}</p>
+                
+                {/* Nutrition score indicator */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-gray-700">Nutrition Score</span>
+                    <span className={`px-3 py-1 rounded-full text-white text-sm font-medium
+                      ${restaurant.nutritionScore >= 8 ? 'bg-green-500' :
+                        restaurant.nutritionScore >= 6 ? 'bg-yellow-500' :
+                        'bg-red-500'}`}
+                    >
+                      {restaurant.nutritionScore}/10
+                    </span>
+                  </div>
+                </div>
+
+                {/* Nutrition details */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Average Calories</span>
+                    <span className="font-medium">{restaurant.averageCalories} kcal</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Healthy Options</span>
+                    <span className="font-medium">{restaurant.healthyOptionsCount}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Distance</span>
+                    <span className="font-medium">{restaurant.distance.toFixed(1)} km</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => window.open(restaurant.menuUrl, '_blank')}
+                  className="mt-4 w-full bg-forest text-white font-semibold py-2 rounded hover:bg-green-700 transition-colors"
+                >
+                  View Menu
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
